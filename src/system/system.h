@@ -1,30 +1,50 @@
-//
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005-2014 Simon Howard
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// DESCRIPTION:
-//	System specific interface stuff.
-//
+/*
+ * Copyright(C) 1993-1996 Id Software, Inc.
+ * Copyright(C) 2005-2014 Simon Howard
+ * Copyright(C) 2023 Joshua Murphy
+ *
+ * This file is part of the little hell engine.
+ *
+ * Little Hell is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * Little Hell is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with Little Hell Engine.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-
-#ifndef __I_SYSTEM__
-#define __I_SYSTEM__
+#ifndef SYSTEM_H 
+#define SYSTEM_H 
 
 #include "d_ticcmd.h"
 #include "d_event.h"
 
+/** @defgroup System System
+ *  @brief Cross-platform operating system functions and utilities.
+ */
 
-typedef void (*atexit_func_t)(void);
+/**
+ * Function callback upon exit
+ */
+typedef void (*on_exit_func_t)(void);
+
+/**
+ *  @ingroup ExitAPI
+ *  @brief Exit function with callbacks
+ *  @todo Document me!
+ */
+void system_exit();
+
+/** @ingroup ExitAPI
+ *  @brief Register a callback function to be called upon `system_exit()`
+ *  @param func The callback function to execute
+ *  @param run_on_error Whether this function should be executed if the system exists on an error.
+ */
+void system_on_exit(on_exit_func_t func, boolean run_on_error)
 
 // Called by DoomMain.
 void I_Init (void);
@@ -47,24 +67,11 @@ boolean I_ConsoleStdout(void);
 // for normal input.
 ticcmd_t* I_BaseTiccmd (void);
 
-
-// Called by M_Responder when quit is selected.
-// Clean exit, displays sell blurb.
-void I_Quit (void) NORETURN;
-
-void I_Error (const char *error, ...) NORETURN PRINTF_ATTR(1, 2);
-
 void I_Tactile (int on, int off, int total);
 
 void *I_Realloc(void *ptr, size_t size);
 
 boolean I_GetMemoryValue(unsigned int offset, void *value, int size);
-
-// Schedule a function to be called when the program exits.
-// If run_if_error is true, the function is called if the exit
-// is due to an error (I_Error)
-
-void I_AtExit(atexit_func_t func, boolean run_if_error);
 
 // Add all system-specific config file variable bindings.
 
